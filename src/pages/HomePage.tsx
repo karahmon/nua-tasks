@@ -7,18 +7,21 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { Button } from "@/lib/utils/ui/button";
 import { File, MoreHorizontal, ArrowUp, ArrowDown } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/lib/utils/ui/pagination";
-
 interface Work {
   key?: string;
   title: string;
   author_names: string[];
   first_publish_year?: number;
   subjects?: string[];
+  authorDOB?: string; // New field
+  authorTopWork?: string; // New field
+  averageRating?: number; // New field
 }
 
 interface Entry {
   work?: Work;
 }
+
 
 interface AuthorInfo {
   authorDOB?: string;
@@ -42,6 +45,36 @@ const HomePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{ field: string, order: 'asc' | 'desc' }>({ field: '', order: 'asc' });
 
+  const getSortableValue = (entry: Entry, field: string) => {
+    switch (field) {
+      case 'averageRating':
+        const workIdA = entry.work?.key?.split("/").pop() || "";
+        return ratingsInfo[workIdA]?.averageRating || 0;
+  
+      case 'author_names':
+        return entry.work?.author_names.join(",") || "";
+  
+      case 'title':
+        return entry.work?.title || "";
+  
+      case 'first_publish_year':
+        return entry.work?.first_publish_year || 0;
+  
+      case 'subjects':
+        const workIdB = entry.work?.key?.split("/").pop() || "";
+        return subjects[workIdB] || "";
+  
+      case 'authorDOB':
+        return entry.work?.author_names.map(authorName => authorInfo[authorName]?.authorDOB || "Unknown").join(",") || "";
+  
+      case 'authorTopWork':
+        return entry.work?.author_names.map(authorName => authorInfo[authorName]?.authorTopWork || "Unknown").join(",") || "";
+  
+      default:
+        return '';
+    }
+  };
+  
   useEffect(() => {
     const fetchAuthorInfo = async (authorName: string) => {
       try {
@@ -128,14 +161,14 @@ const HomePage = () => {
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
   };
-
   const handleSortChange = (field: string) => {
+    console.log('Sorting by:', field);
     setSortBy(prevSort => ({
       field,
       order: prevSort.field === field ? (prevSort.order === 'asc' ? 'desc' : 'asc') : 'asc'
     }));
-  };
-
+  };  
+  
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;
   if (!data || !data.reading_log_entries) return <div>No data available</div>;
@@ -146,22 +179,17 @@ const HomePage = () => {
 
   if (sortBy.field) {
     filteredEntries = [...filteredEntries].sort((a: Entry, b: Entry) => {
-      const aValue = a.work ? a.work[sortBy.field as keyof Work] || '' : '';
-      const bValue = b.work ? b.work[sortBy.field as keyof Work] || '' : '';
+      const aValue = getSortableValue(a, sortBy.field);
+      const bValue = getSortableValue(b, sortBy.field);
+  
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        if (sortBy.order === 'asc') {
-          return aValue.localeCompare(bValue);
-        } else {
-          return bValue.localeCompare(aValue);
-        }
+        return sortBy.order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
       }
-      if (sortBy.order === 'asc') {
-        return String(aValue).localeCompare(String(bValue));
-      } else {
-        return String(bValue).localeCompare(String(aValue));
-      }
+      return sortBy.order === 'asc' ? String(aValue).localeCompare(String(bValue)) : String(bValue).localeCompare(String(aValue));
+
     });
   }
+  
 
   const pageCount = Math.ceil(filteredEntries.length / pageSize);
   const paginatedEntries = filteredEntries.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -226,6 +254,7 @@ const HomePage = () => {
           <CardHeader>
             <CardTitle>Books List</CardTitle>
             <CardDescription>Manage your Book Record</CardDescription>
+            <CardDescription>(For Sorting Kindly Click on the Column Heading)</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -320,12 +349,14 @@ const HomePage = () => {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                <PaginationPrevious href="#" />
                 </PaginationItem>
                 {Array.from({ length: pageCount }, (_, i) => (
-                  <PaginationLink href="#" onClick={() => handlePageChange(i + 1)}>
-                    {i + 1}
-                  </PaginationLink>
+                  <PaginationItem key={i}>
+                    <PaginationLink href="#" onClick={() => handlePageChange(i + 1)}>
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
                 ))}
                 <PaginationItem>
                   <PaginationNext href="#" />
@@ -346,9 +377,9 @@ const HomePage = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Select Records per page</DropdownMenuLabel>
                   <div className="mt-4 flex items-center space-x-4">
-                  <DropdownMenuItem onClick={() => handlePageSizeChange(10)}>10</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePageSizeChange(50)}>50</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePageSizeChange(100)}>100</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handlePageSizeChange(10)}>10</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handlePageSizeChange(50)}>50</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handlePageSizeChange(100)}>100</DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
