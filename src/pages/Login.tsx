@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,19 +10,36 @@ import {
 import { Button } from "@/lib/utils/ui/button";
 import { Input } from "@/lib/utils/ui/input";
 import { Label } from "@/lib/utils/ui/label";
-import { account } from '@/lib/appwrite';
+import { account} from '@/lib/appwrite';  
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function checkLoginStatus() {
+      try {
+        const user = await account.get();
+        navigate('/dashboard/home');
+      } catch {
+        
+      }
+    }
+
+    checkLoginStatus();
+  }, [navigate]);
 
   async function login(email: string, password: string) {
     try {
-      await account.createSession(email, password);
+      await account.createEmailPasswordSession(email, password);
       const user = await account.get();
-      console.log(user);
+      navigate('/dashboard/home');
     } catch (error) {
       console.error("Login failed", error);
+      setError("Login failed. Please check your credentials and try again.");
     }
   }
 
@@ -69,10 +86,11 @@ const LoginPage: React.FC = () => {
                 required
               />
             </div>
+            {error && <div className="text-red-500">{error}</div>}
           </CardContent>
           <CardFooter>
             <Button
-              onClick={() =>login(email, password)}
+              onClick={() => login(email, password)}
               className="w-full"
               style={{ backgroundColor: "#7c726c" }}
             >

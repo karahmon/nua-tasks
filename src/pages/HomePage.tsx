@@ -6,6 +6,8 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from "@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from "@/lib/utils/ui/dropdown-menu";
 import { Button } from "@/lib/utils/ui/button";
 import { File, MoreHorizontal, ArrowUp, ArrowDown } from "lucide-react";
+import { account } from "@/lib/appwrite";
+import { useNavigate } from "react-router-dom";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/lib/utils/ui/pagination";
 interface Work {
   key?: string;
@@ -33,6 +35,7 @@ interface RatingInfo {
 }
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["book"],
     queryFn: () => fetch("https://openlibrary.org/people/mekBot/books/already-read.json").then((res) => res.json()),
@@ -44,6 +47,7 @@ const HomePage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{ field: string, order: 'asc' | 'desc' }>({ field: '', order: 'asc' });
+
 
   const getSortableValue = (entry: Entry, field: string) => {
     switch (field) {
@@ -76,6 +80,15 @@ const HomePage = () => {
   };
   
   useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        await account.get();
+      } catch {
+        navigate('/login');
+      }
+    };
+    checkLoginStatus();
+ 
     const fetchAuthorInfo = async (authorName: string) => {
       try {
         const response = await fetch(`https://openlibrary.org/search/authors.json?q=${encodeURIComponent(authorName)}`);
