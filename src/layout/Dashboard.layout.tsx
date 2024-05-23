@@ -19,6 +19,7 @@ const DashboardLayout = () => {
     const checkLoginStatus = async () => {
       try {
         const user = await account.get();
+        console.log("User logged in:", user);
       } catch {
         navigate('/login');
       }
