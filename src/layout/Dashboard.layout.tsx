@@ -1,15 +1,6 @@
-
 import { Link, Outlet } from "react-router-dom";
-import {
-  Bell,
-  CircleUser,
-  Menu,
-  Book,
-  Search,
-} from "lucide-react";
-
+import { Bell, CircleUser, Menu, Book, Search } from "lucide-react";
 import { Button } from "@/lib/utils/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,16 +11,40 @@ import {
 } from "@/lib/utils/ui/dropdown-menu";
 import { Input } from "@/lib/utils/ui/input";
 import { Sheet, SheetTrigger } from "@/lib/utils/ui/sheet";
+import { useState } from "react";
+import { account } from "@/lib/appwrite";
+import { useNavigate } from "react-router-dom"; // Use useNavigate instead of redirect
 
-const DashboardLayout= () => {
-  
-    return (
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+const DashboardLayout = () => {
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
+  const checkLoginStatus = async () => {
+    try {
+      const user = await account.get();
+      return {user}
+    } catch {
+      navigate('/login'); 
+    }
+  };
+  checkLoginStatus();
+
+  const logoutUser = async () => {
+    try {
+      await account.deleteSession('current');
+      setLoggedInUser(null);
+      navigate('/login'); // Use navigate instead of redirect
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  return (
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link to="/" className="flex items-center gap-2 font-semibold">
-            <img src="https://cdn.nuawoman.com/global/img/header/NuaLogo2021-TM.png" alt="Nua Logo" width="80" height="40" /> 
+              <img src="https://cdn.nuawoman.com/global/img/header/NuaLogo2021-TM.png" alt="Nua Logo" width="80" height="40" />
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
@@ -47,7 +62,6 @@ const DashboardLayout= () => {
               </Link>
             </nav>
           </div>
-          
         </div>
       </div>
       <div className="flex flex-col">
@@ -89,12 +103,12 @@ const DashboardLayout= () => {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={logoutUser}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <Outlet />
+          <Outlet />
         </main>
       </div>
     </div>

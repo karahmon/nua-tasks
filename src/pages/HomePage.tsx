@@ -6,8 +6,6 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from "@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from "@/lib/utils/ui/dropdown-menu";
 import { Button } from "@/lib/utils/ui/button";
 import { File, MoreHorizontal, ArrowUp, ArrowDown } from "lucide-react";
-import { account } from "@/lib/appwrite";
-import { useNavigate } from "react-router-dom";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/lib/utils/ui/pagination";
 interface Work {
   key?: string;
@@ -35,7 +33,7 @@ interface RatingInfo {
 }
 
 const HomePage = () => {
-  const navigate = useNavigate();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["book"],
     queryFn: () => fetch("https://openlibrary.org/people/mekBot/books/already-read.json").then((res) => res.json()),
@@ -77,18 +75,8 @@ const HomePage = () => {
       default:
         return '';
     }
-  };
-  
+  };  
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        await account.get();
-      } catch {
-        navigate('/login');
-      }
-    };
-    checkLoginStatus();
- 
     const fetchAuthorInfo = async (authorName: string) => {
       try {
         const response = await fetch(`https://openlibrary.org/search/authors.json?q=${encodeURIComponent(authorName)}`);
@@ -124,7 +112,7 @@ const HomePage = () => {
         console.error("Error fetching rating info:", error);
       }
     };
-
+    
     const fetchSubjects = async (workId: string) => {
       try {
         const response = await fetch(`https://openlibrary.org/works/${workId}.json`);
