@@ -33,7 +33,6 @@ interface RatingInfo {
 }
 
 const HomePage = () => {
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["book"],
     queryFn: () => fetch("https://openlibrary.org/people/mekBot/books/already-read.json").then((res) => res.json()),
@@ -228,7 +227,6 @@ const HomePage = () => {
     document.body.appendChild(link);
     link.click();
   };
-
   return (
     <>
       <div>
@@ -326,7 +324,7 @@ const HomePage = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Toggle menu</span>
                             </Button>
                           </DropdownMenuTrigger>
@@ -350,7 +348,7 @@ const HomePage = () => {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                <PaginationPrevious href="#" />
+                  <PaginationPrevious href="#" />
                 </PaginationItem>
                 {Array.from({ length: pageCount }, (_, i) => (
                   <PaginationItem key={i}>
@@ -371,26 +369,27 @@ const HomePage = () => {
                   <Button size="sm" variant="ghost" className="flex items-center">
                     <span>{pageSize}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 12a1 1 0 01-1-1V7a1 1 0 011.5-.87l4 2a1 1 0 010 1.74l-4 2A1 1 0 0110 12zm-2-3.28V7.28L5.07 10 8 12.72zM3 14h14a1 1 0 110 2H3a1 1 0 110-2z" clipRule="evenodd" />
-                    </svg>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Select Records per page</DropdownMenuLabel>
-                  <div className="mt-4 flex items-center space-x-4">
-                    <DropdownMenuItem onClick={() => handlePageSizeChange(10)}>10</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handlePageSizeChange(50)}>50</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handlePageSizeChange(100)}>100</DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </>
-  );
-};
+                      <path fillRule="evenodd" d="M10 12a1 1 0 01-1-1V7a1 1 0 011.5-.87l4 2a1 1 0 010 1.74l-4 2A1 1 0 0110 12zm-2-3.28V7.28L5.07 10 8 12.72zM314h14a1 1 0 110 2H3a1 1 0 110-2z" clipRule="evenodd" />
+                      </svg>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Select Records per page</DropdownMenuLabel>
+                <div className="mt-4 flex items-center space-x-4">
+                  <DropdownMenuItem onClick={() => handlePageSizeChange(10)}>10</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handlePageSizeChange(50)}>50</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handlePageSizeChange(100)}>100</DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
+  </>
+);
+  
+}
 
 export default HomePage;
 
