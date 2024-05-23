@@ -6,6 +6,10 @@ import DashboardLayout from "./layout/Dashboard.layout"
 
 export const Router = createBrowserRouter([
     {
+        path:'/',
+        element:<LoginPage />
+    },
+    {
         path:'dashboard',
         element:<DashboardLayout />,
         children:[{
@@ -14,9 +18,6 @@ export const Router = createBrowserRouter([
 
         }],
 
-    },
-    {
-        path:'/login',
-        element:<LoginPage />
     }
+  
 ]);

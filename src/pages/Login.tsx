@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
     async function checkLoginStatus() {
       try {
         const user = await account.get();
-        console.log("User logged in:", user);
+       console.log("User logged in:", user);
         navigate('/dashboard/home');
       } catch {
         

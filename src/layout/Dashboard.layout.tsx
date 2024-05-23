@@ -23,7 +23,7 @@ const DashboardLayout = () => {
       const user = await account.get();
       return {user}
     } catch {
-      navigate('/login'); 
+      navigate('/'); 
     }
   };
   checkLoginStatus();
@@ -32,7 +32,7 @@ const DashboardLayout = () => {
     try {
       await account.deleteSession('current');
       setLoggedInUser(null);
-      navigate('/login'); 
+      navigate(''); 
     } catch (error) {
       console.error("Error logging out:", error);
     }
