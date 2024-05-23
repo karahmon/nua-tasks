@@ -1,8 +1,0 @@
-{
-    "routes": [
-      { "handle": "filesystem" },
-      { "src": "/login", "dest": "/path/to/login-page" },
-      { "src": "/(.*)", "dest": "/index.html" }
-    ]
-  }
-  
