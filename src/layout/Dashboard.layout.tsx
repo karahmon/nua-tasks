@@ -13,11 +13,11 @@ import { Input } from "@/lib/utils/ui/input";
 import { Sheet, SheetTrigger } from "@/lib/utils/ui/sheet";
 import { useState } from "react";
 import { account } from "@/lib/appwrite";
-import { useNavigate } from "react-router-dom"; // Use useNavigate instead of redirect
+import { useNavigate } from "react-router-dom"; 
 
 const DashboardLayout = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
   const checkLoginStatus = async () => {
     try {
       const user = await account.get();
@@ -32,7 +32,7 @@ const DashboardLayout = () => {
     try {
       await account.deleteSession('current');
       setLoggedInUser(null);
-      navigate('/login'); // Use navigate instead of redirect
+      navigate('/login'); 
     } catch (error) {
       console.error("Error logging out:", error);
     }

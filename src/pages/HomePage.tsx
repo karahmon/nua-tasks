@@ -13,9 +13,9 @@ interface Work {
   author_names: string[];
   first_publish_year?: number;
   subjects?: string[];
-  authorDOB?: string; // New field
-  authorTopWork?: string; // New field
-  averageRating?: number; // New field
+  authorDOB?: string; 
+  authorTopWork?: string;
+  averageRating?: number; 
 }
 
 interface Entry {
