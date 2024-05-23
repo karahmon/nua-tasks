@@ -2,12 +2,8 @@
     "version": 2,
     "routes": [
       {
-        "src": "/login/(.*)",
-        "dest": "/login/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/"
+        "src": "/login",
+        "dest": "/login"
       }
     ]
   }
