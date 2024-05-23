@@ -1,36 +1,38 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { Bell, CircleUser, Menu, Book, Search } from "lucide-react";
 import { Button } from "@/lib/utils/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/lib/utils/ui/dropdown-menu";
 import { Input } from "@/lib/utils/ui/input";
 import { Sheet, SheetTrigger } from "@/lib/utils/ui/sheet";
-import { useEffect } from "react";
+import { useState } from "react";
 import { account } from "@/lib/appwrite";
+import { useNavigate } from "react-router-dom"; 
 
 const DashboardLayout = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const user = await account.get();
-        console.log("User logged in:", user);
-      } catch {
-        navigate('/login');
-      }
-    };
-    checkLoginStatus();
-  }, [navigate]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const navigate = useNavigate(); 
+  const checkLoginStatus = async () => {
+    try {
+      const user = await account.get();
+      return {user}
+    } catch {
+      navigate('/login'); 
+    }
+  };
+  checkLoginStatus();
 
   const logoutUser = async () => {
     try {
       await account.deleteSession('current');
-      navigate('/login');
+      setLoggedInUser(null);
+      navigate('/login'); 
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -76,16 +78,18 @@ const DashboardLayout = () => {
               </Button>
             </SheetTrigger>
           </Sheet>
-          <div className="w-full flex-1 flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search books..."
-                className="w-full appearance-none bg-background pl-8 shadow-none"
-              />
-            </div>
-            <Button variant="default">Submit</Button>
+          <div className="w-full flex-1">
+            <form>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search Authors..."
+                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                />
+                
+              </div>
+            </form>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -95,6 +99,11 @@ const DashboardLayout = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logoutUser}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
