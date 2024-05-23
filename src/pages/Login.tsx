@@ -23,6 +23,7 @@ const LoginPage: React.FC = () => {
     async function checkLoginStatus() {
       try {
         const user = await account.get();
+        console.log("User logged in:", user);
         navigate('/dashboard/home');
       } catch {
         
@@ -36,6 +37,7 @@ const LoginPage: React.FC = () => {
     try {
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
+      console.log("User logged in:", user);
       navigate('/dashboard/home');
     } catch (error) {
       console.error("Login failed", error);
